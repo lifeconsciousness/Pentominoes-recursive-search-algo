@@ -8,6 +8,7 @@
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays; // added for ease of debugging
 
 /**
  * This class contains all the methods that you may need to start developing your project together with the representation of the pentomino's pieces
@@ -75,25 +76,23 @@ public class PentominoBuilder {
                     {1,1}
             },
             {
-            	//
-        		//
-        		// TODO: Implement pentomino representation P
-        		//
-        		//
+            	// pentomino representation P
+                    {1,1},
+                    {1,1},
+                    {1,0}
             },
             {
-            	//
-        		//
-        		// TODO: Implement pentomino representation N
-        		//
-        		//
+            	// pentomino representation N
+                    {0,1},
+                    {1,1},
+                    {1,0},
+                    {1,0}
             },
             {
-            	//
-        		//
-        		// TODO: Implement pentomino representation F
-        		//
-        		//
+            	// pentomino representation F
+                    {0,1,1},
+                    {1,1,0},
+                    {0,1,0}
             }
     };
 
@@ -376,21 +375,18 @@ public class PentominoBuilder {
      */
     public static boolean isEqual(int[][] data1, int[][] data2)
     {
-    	
-    	//
-    	//
-    	// TODO: To be implemented
-    	//
-    	//
-
-        return false;
+        if(Arrays.deepEquals(data1, data2)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
     /**
      * Erase rows and columns that contain only zeros
      * @param data a matrix
-     * @return the shrinken matrix
+     * @return the shrunken matrix
      */
     public static int[][]eraseEmptySpace(int[][] data)
     {
