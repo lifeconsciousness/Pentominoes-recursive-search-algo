@@ -4,6 +4,7 @@
  * @version 2022.0
  */
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -12,6 +13,7 @@ import java.util.Random;
 public class Search {
 	public static final int horizontalGridSize = 5;
 	public static final int verticalGridSize = 6;
+	public static int calls = 0;
 
 	public static final char[] input = { 'W', 'Y', 'I', 'T', 'Z', 'L', 'P', 'N', 'F' };
 
@@ -158,6 +160,36 @@ public class Search {
 				ui.setState(field);
 				System.out.println("Invalid Solution - " + solutionCounter++);
 			}
+		}
+	}
+
+	private static void recursiveSearch(int[][] field, int depth) {
+		calls++;
+
+		// loop through all pentominoes
+		for (int i = 0; i < input.length; i++) {
+			int pentID = characterToID(input[i]);
+
+			// loop through all permutation of current pentomino
+			for (int j = 0; j < PentominoDatabase.data[pentID].length; j++) {
+
+				// go through all squares on the grid
+				for (int x = 0; x < horizontalGridSize; x++) {
+					for (int y = 0; y < verticalGridSize; y++) {
+
+						// copy the grid
+						int[][] newGrid = new int[horizontalGridSize][verticalGridSize];
+						for (int gridX = 0; gridX < horizontalGridSize; gridX++) {
+							for (int gridY = 0; gridY < verticalGridSize; gridY++) {
+								newGrid[x][y] = field[x][y];
+							}
+						}
+
+						// place peace
+					}
+				}
+			}
+
 		}
 	}
 
