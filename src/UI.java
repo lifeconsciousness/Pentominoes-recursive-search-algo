@@ -16,6 +16,7 @@ public class UI extends JPanel
     private JFrame window;
     private int[][] state;
     private int size;
+    public JLabel solutionCounterUI = new JLabel();
 
     /**
      * Constructor for the GUI. Sets everything up
@@ -23,27 +24,39 @@ public class UI extends JPanel
      * @param y y position of the GUI
      * @param _size size of the GUI
      */
-    public UI(int x, int y, int _size)
-    {
+    public UI(int x, int y, int _size) {
         size = _size;
         setPreferredSize(new Dimension(x * size, y * size));
-
         window = new JFrame("Pentomino");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
-        window.add(this);
+    
+        // Create a panel to hold the main content
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+    
+        // Add this UI component to the main panel
+        mainPanel.add(this, BorderLayout.CENTER);
+    
+        // Create and add the solutionCounter label to the main panel
+        solutionCounterUI = new JLabel("Solution Counter");
+        solutionCounterUI.setHorizontalAlignment(JLabel.CENTER);
+        mainPanel.add(solutionCounterUI, BorderLayout.SOUTH);
+    
+        // Add the main panel to the frame
+        window.add(mainPanel);
+    
         window.pack();
         window.setVisible(true);
-
+    
         state = new int[x][y];
-        for (int i = 0; i < state.length; i++)
-        {
-            for (int j = 0; j < state[i].length; j++)
-            {
+        for (int i = 0; i < state.length; i++) {
+            for (int j = 0; j < state[i].length; j++) {
                 state[i][j] = -1;
             }
         }
     }
+    
 
     /**
      * This function is called BY THE SYSTEM if required for a new frame, uses the state stored by the UI class.
@@ -103,7 +116,7 @@ public class UI extends JPanel
      * This function should be called to update the displayed state (makes a copy)
      * @param _state information about the new state of the GUI
      */
-    public void setState(int[][] _state)
+    public void setState(int[][] _state,long solutionCounter)
     {
         for (int i = 0; i < state.length; i++)
         {
@@ -112,7 +125,7 @@ public class UI extends JPanel
                 state[i][j] = _state[i][j];
             }
         }
-
+        solutionCounterUI.setText(String.valueOf(solutionCounter));
         //Tells the system a frame update is required
         repaint();
     }

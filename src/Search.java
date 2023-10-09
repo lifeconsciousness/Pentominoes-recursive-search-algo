@@ -144,12 +144,12 @@ public class Search
 
     		if (solutionFound) {
     			//display the field
-    			ui.setState(field); 
+    			ui.setState(field,solutionCounter); 
     			System.out.println("Solution found");
     			break;
     		} else {
-				ui.setState(field); 
-				System.out.println("Invalid Solution - " + solutionCounter++);
+				ui.setState(field,solutionCounter); 
+				solutionCounter++;
 			}
     	}
     }
