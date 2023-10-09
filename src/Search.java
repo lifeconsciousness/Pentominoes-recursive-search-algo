@@ -3,17 +3,18 @@
  * @version 2022.0
  */
 
- import java.util.Random;
+ import java.util.Arrays;
+import java.util.Random;
+ import java.util.Scanner;
 
 /**
  * This class includes the methods to support the search of a solution.
  */
 public class Search
 {
-    public static final int horizontalGridSize = 5;
-    public static final int verticalGridSize = 6;
-    
-    public static final char[] input = { 'W', 'Y', 'I', 'T', 'Z', 'L'};
+    public static int horizontalGridSize = 12;
+    public static int verticalGridSize = 5;
+    public static char[] input; //WYITZL
     
     //Static UI class to display the board
     public static UI ui = new UI(horizontalGridSize, verticalGridSize, 50);
@@ -145,11 +146,11 @@ public class Search
     		if (solutionFound) {
     			//display the field
     			ui.setState(field); 
-    			System.out.println("Solution found");
+    			System.out.println("Solution found " + solutionCounter);
     			break;
     		} else {
 				ui.setState(field); 
-				System.out.println("Invalid Solution - " + solutionCounter++);
+				solutionCounter++;
 			}
     	}
     }
@@ -183,6 +184,10 @@ public class Search
 	 */
     public static void main(String[] args)
     {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Input array (XIZTUVWYLPNF): ");
+		input = scanner.next().toCharArray();
+
         search();
     }
 }
