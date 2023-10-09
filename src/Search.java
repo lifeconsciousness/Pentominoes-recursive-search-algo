@@ -150,7 +150,7 @@ public class Search
     			break;
     		} else {
 				ui.setState(field); 
-				solutionCounter++;
+				System.out.println("Invalid Solution " + solutionCounter++);
 			}
     	}
     }
