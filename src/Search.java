@@ -12,8 +12,8 @@ import java.util.Scanner;
  */
 public class Search {
 	// Global variables
-    public static int horizontalGridSize; // 12
-    public static int verticalGridSize; // 5
+    public static int horizontalGridSize; // 10
+    public static int verticalGridSize; // 6
     public static char[] input; // XIZTUVWYLPN
 	public static boolean stopAttempt; // false
 	public static boolean solutionFound; // false
