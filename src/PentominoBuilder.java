@@ -375,7 +375,9 @@ public class PentominoBuilder {
      */
     public static boolean isEqual(int[][] data1, int[][] data2)
     {
+        // Checks if the inner array of the the 2 given arrays are equal
         if(Arrays.deepEquals(data1, data2)) {
+            // If they are one will be removed from the temporal database
             return true;
         } else {
             return false;

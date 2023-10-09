@@ -135,6 +135,7 @@ public class Search
 	    		} 
     		}
 			
+			// Checks if the field array has any empty squares (-1)
 			for (int i = 0; i < field.length; i++) {
 				for (int j = 0; j < field[i].length; j++) {
 					if(field[i][j] == -1) {
