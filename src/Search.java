@@ -41,7 +41,7 @@ public class Search
 	
 	/**
 	 * Get as input the character representation of a pentomino and translate it into its corresponding numerical value (ID)
-	 * @param character a character representating a pentomino
+	 * @param character a character representing a pentomino
 	 * @return	the corresponding ID (numerical value)
 	 */
     private static int characterToID(char character) {
@@ -75,7 +75,7 @@ public class Search
     }
 	
 	/**
-	 * Basic implementation of a search algorithm. It is not a bruto force algorithms (it does not check all the posssible combinations)
+	 * Basic implementation of a search algorithm. It is not a brute force algorithms (it does not check all the possible combinations)
 	 * but randomly takes possible combinations and positions to find a possible solution.
 	 * The solution is not necessarily the most efficient one
 	 * This algorithm can be very time-consuming
@@ -84,10 +84,10 @@ public class Search
     private static void basicSearch(int[][] field){
     	Random random = new Random();
     	boolean solutionFound = false;
+		long solutionCounter = 0;
     	
     	while (!solutionFound) {
-    		solutionFound = true;
-    		
+			solutionFound = true;
     		//Empty board again to find a solution
 			for (int i = 0; i < field.length; i++) {
 				for (int j = 0; j < field[i].length; j++) {
@@ -133,21 +133,24 @@ public class Search
 	    			addPiece(field, pieceToPlace, pentID, x, y);
 	    		} 
     		}
-    		//Check whether complete field is filled
-    		//
-    		//
-    		// TODO: To be implemented
-    		//
-    		//
-    		
+			
+			for (int i = 0; i < field.length; i++) {
+				for (int j = 0; j < field[i].length; j++) {
+					if(field[i][j] == -1) {
+						solutionFound = false;
+					}
+				}
+			}
 
-    		
     		if (solutionFound) {
     			//display the field
     			ui.setState(field); 
     			System.out.println("Solution found");
     			break;
-    		}
+    		} else {
+				ui.setState(field); 
+				System.out.println("Invalid Solution - " + solutionCounter++);
+			}
     	}
     }
 

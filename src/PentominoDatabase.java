@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 /**
  * This class takes care of reading all pentominoes and their permutations from a CSV
- * Information abpout the structure of the CSV file (also included in pentomino.csv.README)
+ * Information about the structure of the CSV file (also included in pentomino.csv.README)
  * Each line in the CSV file defines one permutation of a pentomino.
  *  - The first number is the ID for a pentomino, from 0 to 11.
  *  - The second number is the index of the permutation (rotation, flip, etc.), between 0 to 7.
