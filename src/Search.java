@@ -25,10 +25,10 @@ public class Search {
 	public static void setup() {
 		Scanner scanner = new Scanner(System.in);
 		// Width
-		System.out.print("Width of the canvas (12): ");
+		System.out.print("Width of the canvas (1): ");
 		horizontalGridSize = scanner.nextInt();
 		// Height
-		System.out.print("Height of the canvas (5): ");
+		System.out.print("Height of the canvas (6): ");
 		verticalGridSize = scanner.nextInt();
 		// Pentominoes to use
 		System.out.print("Input array (XIZTUVWYLPNF): ");
