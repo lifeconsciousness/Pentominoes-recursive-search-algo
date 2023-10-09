@@ -12,12 +12,12 @@ import java.util.Random;
  */
 public class Search
 {
-    public static int horizontalGridSize = 12;
-    public static int verticalGridSize = 5;
+    public static int horizontalGridSize; //12
+    public static int verticalGridSize; //5
     public static char[] input; //WYITZL
     
     //Static UI class to display the board
-    public static UI ui = new UI(horizontalGridSize, verticalGridSize, 50);
+    public static UI ui;
 
 	/**
 	 * Helper function which starts a basic search algorithm
@@ -150,7 +150,7 @@ public class Search
     			break;
     		} else {
 				ui.setState(field); 
-				System.out.println("Invalid Solution " + solutionCounter++);
+				//System.out.println("Invalid Solution " + solutionCounter++);
 			}
     	}
     }
@@ -185,8 +185,14 @@ public class Search
     public static void main(String[] args)
     {
 		Scanner scanner = new Scanner(System.in);
+		System.out.println("Width of array (12): ");
+		horizontalGridSize = scanner.nextInt();
+		System.out.println("Height of array (5): ");
+		verticalGridSize = scanner.nextInt();
 		System.out.println("Input array (XIZTUVWYLPNF): ");
 		input = scanner.next().toCharArray();
+
+		ui = new UI(horizontalGridSize, verticalGridSize, 50);
 
         search();
     }
