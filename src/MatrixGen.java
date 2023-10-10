@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class MatrixGen {
-    public static int horizontalGridSize = 2; // 10
-    public static int verticalGridSize = 3; // 6
-    public static char[] input = { 'P' };//{'X', 'I', 'Z', 'T', 'U', 'V', 'W', 'Y', 'L', 'P', 'N', 'F'}; // XIZ TUV WYL PNF
+    public static int horizontalGridSize = 10; // 10
+    public static int verticalGridSize = 6; // 6
+    public static char[] input = {'X', 'I', 'Z', 'T', 'U', 'V', 'W', 'Y', 'L', 'P', 'N', 'F'}; // XIZ TUV WYL PNF
     public static int totalPossibilities = 0;
     public static int cRow = 0;
     public static int listPos = 0;
