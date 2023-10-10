@@ -14,7 +14,7 @@ public class Search {
 	// Global variables
     public static int horizontalGridSize; // 10
     public static int verticalGridSize; // 6
-    public static char[] input; // XIZTUVWYLPN
+    public static char[] input; // XIZTUVWYLPNF
 	public static boolean stopAttempt; // false
 	public static boolean solutionFound; // false
 	public static UI ui;
@@ -25,7 +25,7 @@ public class Search {
 	public static void setup() {
 		Scanner scanner = new Scanner(System.in);
 		// Width
-		System.out.print("Width of the canvas (1): ");
+		System.out.print("Width of the canvas (10): ");
 		horizontalGridSize = scanner.nextInt();
 		// Height
 		System.out.print("Height of the canvas (6): ");
