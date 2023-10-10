@@ -4,18 +4,18 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class MatrixGen {
-    public static int horizontalGridSize = 10; // 10
-    public static int verticalGridSize = 6; // 6
-    public static char[] input = {'X', 'I', 'Z', 'T', 'U', 'V', 'W', 'Y', 'L', 'P', 'N', 'F'}; // XIZ TUV WYL PNF
+    public static int horizontalGridSize = 2; // 10
+    public static int verticalGridSize = 3; // 6
+    public static char[] input = { 'P' };//{'X', 'I', 'Z', 'T', 'U', 'V', 'W', 'Y', 'L', 'P', 'N', 'F'}; // XIZ TUV WYL PNF
     public static int totalPossibilities = 0;
     public static int cRow = 0;
-    public static int displacement = 0;
+    public static int listPos = 0;
     public static int[][] matrix;
 
     public static void main(String[] args) {
         //setup();
         totalPossibilities = getRows(input);
-        matrix = new int[horizontalGridSize*verticalGridSize+input.length][totalPossibilities];
+        matrix = new int[input.length+(horizontalGridSize*verticalGridSize)][totalPossibilities];
         tryPentominoes(input);
 
         //ran(matrix);
@@ -37,8 +37,6 @@ public class MatrixGen {
 		// Pentominoes to use
 		System.out.print("Input array (XIZTUVWYLPNF): ");
 		input = scanner.next().toCharArray();
-
-        //field = new int[horizontalGridSize][verticalGridSize];
 	}
 
     public static int getRows(char[] input) {
@@ -79,51 +77,61 @@ public class MatrixGen {
             int pentID = characterToID(input[i]);
             for(int j = 0; j < PentominoDatabase.data[pentID].length; j++) {
                 int[][] pieceToPlace = PentominoDatabase.data[pentID][j];
-                for(int x = 0; x <= horizontalGridSize; x++) {
-                    for(int y = 0; y <= verticalGridSize; y++) {
-                        if (((x + pieceToPlace[0].length) <= horizontalGridSize) && ((y + pieceToPlace.length) <= verticalGridSize)) {
-                            addToArray(pentID, pieceToPlace, x, y);
+                for(int y = 0; y < verticalGridSize; y++) {
+                    for(int x = 0; x < horizontalGridSize; x++) {
+                        if(((x + pieceToPlace.length) <= horizontalGridSize) && ((y + pieceToPlace[0].length) <= verticalGridSize)) {
+                            addToArray(pieceToPlace, x, y);
                         }
                     }
                 }
-                displacement = 0;
             }
+            listPos++;
         }
     }
 
-    public static void addToArray(int pentID, int[][] pieceToPlace, int x, int y) {
-        matrix[pentID][cRow] = 1;
+    public static void addToArray(int[][] pieceToPlace, int x, int y) {
+        matrix[listPos][cRow] = 1;
+        //System.out.println(cRow);
+        //System.out.println("x: " + x + "(" + ((pieceToPlace.length)+x) + ") y: " + y + "(" + ((pieceToPlace[0].length)+y) + ") ");
         for(int i = 0; i < pieceToPlace.length; i++) {
             for(int j = 0; j < pieceToPlace[i].length; j++) {
-                if(pieceToPlace[i][j] != 0) {
-                    try { 
-                        int tmp = 12+i+(j*10); //+displacement; //implement funciton that turns pento into [ 0 1 0 0 0 0 0 0 0 0 ] [ 1 1 1 0 0 0 0 0 0 0 ] [ 0 1 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 0 0 ]
-                        matrix[tmp][cRow] = 1;
-                    } catch(Exception e) {
-                        e.getStackTrace();
-                    }
-                }
+                int tmp = (i+(j*horizontalGridSize)) + (x+(y*horizontalGridSize)) + input.length;
+                matrix[tmp][cRow] = pieceToPlace[i][j];
             }
         }
-        displacement++;
         cRow++;
     }
     
     public static void toCSV(int[][] matrix) throws IOException {
         FileWriter writer = new FileWriter("matrix.csv");
-        writer.append("X I Z T U V W Y L P N F |   0 1 2 3 4 5 6 7 8 9     0 1 2 3 4 5 6 7 8 9     0 1 2 3 4 5 6 7 8 9     0 1 2 3 4 5 6 7 8 9     0 1 2 3 4 5 6 7 8 9     0 1 2 3 4 5 6 7 8 9\n");
+        String inputList = "";
+        String numberPerRow = "";
+        String allRows = "";
+        for(int i = 0; i <input.length; i++) {
+            inputList = inputList + input[i] + " ";
+        }
+        for(int i = 0; i < verticalGridSize; i++) {
+            for(int j = 0; j < horizontalGridSize; j++) {
+                numberPerRow = numberPerRow + j + " ";
+            }
+            allRows = allRows + "[ " + numberPerRow + "] ";
+            numberPerRow = "";
+        }
+        writer.append(inputList + "| " + allRows + "\n");
         writer.flush();
-        System.out.println(matrix.length);
+        //System.out.println(Arrays.deepToString(matrix));
         for(int i = 0; i < totalPossibilities; i++) {
             for(int j = 0; j < matrix.length; j++) {
-                writer.append(matrix[j][i] + " ");
-                if(j == 11) { writer.append("| [ ");}
-                else if(j == 21) { writer.append("] [ "); }
-                else if(j == 31) { writer.append("] [ "); }
-                else if(j == 41) { writer.append("] [ "); }
-                else if(j == 51) { writer.append("] [ "); }
-                else if(j == 61) { writer.append("] [ "); }
-                else if(j == 71) { writer.append("]"); }
+                if(j < input.length) {
+                    writer.append(matrix[j][i] + " ");
+                    if(j == input.length-1) { writer.append("| [ "); }
+                } else {
+                    writer.append(matrix[j][i] + " ");
+                    for(int k = 0; k < verticalGridSize; k++) { 
+                        if(j == (k*horizontalGridSize)+input.length-1) { writer.append("[ "); }
+                        if(j == horizontalGridSize+(k*horizontalGridSize)+input.length-1) { writer.append("] "); }
+                    }
+                }
             } 
             writer.flush();
             writer.append('\n');
