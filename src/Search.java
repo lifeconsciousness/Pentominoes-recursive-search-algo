@@ -25,7 +25,7 @@ public class Search {
 	public static void setup() {
 		Scanner scanner = new Scanner(System.in);
 		// Width
-		System.out.print("Width of the canvas (1): ");
+		System.out.print("Width of the canvas (10): ");
 		horizontalGridSize = scanner.nextInt();
 		// Height
 		System.out.print("Height of the canvas (6): ");
