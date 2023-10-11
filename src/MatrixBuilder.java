@@ -3,10 +3,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class MatrixGen {
-    public static int horizontalGridSize = 10; // 10
-    public static int verticalGridSize = 6; // 6
-    public static char[] input = {'X', 'I', 'Z', 'T', 'U', 'V', 'W', 'Y', 'L', 'P', 'N', 'F'}; // XIZ TUV WYL PNF
+public class MatrixBuilder {
+    public static int horizontalGridSize = 1; // 10
+    public static int verticalGridSize = 2; // 6
+    public static char[] input = { 'R', 'R'}; //{'X', 'I', 'Z', 'T', 'U', 'V', 'W', 'Y', 'L', 'P', 'N', 'F'}; // XIZ TUV WYL PNF
     public static int totalPossibilities = 0;
     public static int cRow = 0;
     public static int listPos = 0;
@@ -14,15 +14,13 @@ public class MatrixGen {
 
     public static void main(String[] args) {
         //setup();
-        totalPossibilities = getRows(input);
+        totalPossibilities = getPossibilities(input);
         matrix = new int[input.length+(horizontalGridSize*verticalGridSize)][totalPossibilities];
         tryPentominoes(input);
-
-        //ran(matrix);
         try {
             toCSV(matrix);
         } catch(Exception e) {
-            e.getStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -39,7 +37,7 @@ public class MatrixGen {
 		input = scanner.next().toCharArray();
 	}
 
-    public static int getRows(char[] input) {
+    public static int getPossibilities(char[] input) {
         int possibilities = 0;
         for(int i = 0; i < input.length; i++) {
             int pentID = characterToID(input[i]);
@@ -50,20 +48,6 @@ public class MatrixGen {
                         if (((x + pieceToPlace[0].length) <= horizontalGridSize) && ((y + pieceToPlace.length) <= verticalGridSize)) {
                             possibilities++;
                         }
-                    }
-                }
-            }
-        }
-        System.out.println("Total possibilities: " + possibilities);
-        return possibilities;
-    } public static int getRows(int input) {
-        int possibilities = 0;
-        for(int j = 0; j < PentominoDatabase.data[input].length; j++) {
-            int[][] pieceToPlace = PentominoDatabase.data[input][j];
-            for(int x = 0; x <= horizontalGridSize; x++) {
-                for(int y = 0; y <= verticalGridSize; y++) {
-                    if (((x + pieceToPlace[0].length) <= horizontalGridSize) && ((y + pieceToPlace.length) <= verticalGridSize)) {
-                        possibilities++;
                     }
                 }
             }
@@ -101,9 +85,22 @@ public class MatrixGen {
         }
         cRow++;
     }
-    
+
     public static void toCSV(int[][] matrix) throws IOException {
         FileWriter writer = new FileWriter("matrix.csv");
+        for(int i = 0; i < totalPossibilities; i++) {
+            for(int j = 0; j < matrix.length; j++) {
+                writer.append(matrix[j][i] + ",");
+            } 
+            writer.flush();
+            writer.append("\n");
+        }
+        writer.close();
+        toReadableCSV(matrix);
+    }
+
+    public static void toReadableCSV(int[][] matrix) throws IOException {
+        FileWriter writer = new FileWriter("matrixReadable.csv");
         String inputList = "";
         String numberPerRow = "";
         String allRows = "";
@@ -178,17 +175,12 @@ public class MatrixGen {
 			case 'F':
 				pentID = 11;
 				break;
+            case 'R': // for testing 1x1 pentomino // REMOVE
+                pentID = 12;
+				break;
 			default:
 				pentID = -1;
 		}
     	return pentID;
-    }
-
-    public static void ran(int[][] matrix) {
-        for(int i = 0; i < matrix.length; i++) {
-            for(int j = 0; j < matrix[i].length; j++) {
-                matrix[i][j] = (int) Math.round(Math.random()); //(int) Math.round(Math.random());
-            }
-        }
     }
 }
