@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class MatrixBuilder {
     public static int horizontalGridSize = 1; // 10
     public static int verticalGridSize = 2; // 6
-    public static char[] input = { 'R', 'R'}; //{'X', 'I', 'Z', 'T', 'U', 'V', 'W', 'Y', 'L', 'P', 'N', 'F'}; // XIZ TUV WYL PNF
+    public static char[] input = { 'R', 'R' }; //{'X', 'I', 'Z', 'T', 'U', 'V', 'W', 'Y', 'L', 'P', 'N', 'F'}; // XIZ TUV WYL PNF
     public static int totalPossibilities = 0;
     public static int cRow = 0;
     public static int listPos = 0;

@@ -5,68 +5,116 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class SearchExactCover {
+
+    public static int currentColumn = 0;
+    public static int currentRow = 0;
+    public String solution = "";
     public static void main(String[] args) {
-        int[][] data = loadData("matrix.csv");
-        exactCover(data);
-        //System.out.println(Arrays.toString(data));
+        int[][] Matrix = loadMatrix("matrix.csv");
+        exactCover(Matrix);
+        //System.out.println(Arrays.toString(Matrix));
     }
 
-    public static int[][] exactCover(int[][] data) {
-        int selectedColumn = sumColumns(data);
-        int selectedRow = sumRows(selectedColumn, data);
-        int[] selectedColumns = getSelectedColumns(selectedRow, data);
-        if(selectedRow == -1) { 
-            cutBranch();
+    public static int[][] exactCover(int[][] Matrix) {
+        int[][] newMatrix;
+        int columnNum = currentColumn;
+        int selectedRowNum = selectRow(columnNum, currentRow, Matrix);
+        if(selectedRowNum == -1) {
+            System.out.println("WAAAAAAAAAAAAAAAA");
         } else {
+            int[] selectedRow = getSelectedRow(selectedRowNum, Matrix);
+            int[] columnsToDelete = getSColumns(selectedRow, Matrix);
+            int[] rowsToDelete = addColumns(columnsToDelete, Matrix);
 
+            newMatrix = new int[][];
+            System.out.println(Arrays.toString(columnsToDelete));
         }
+        
+        
+        //int[] columnsToDelete = getcolumnsToDelete(selectedRow, Matrix);
 
-        int[][] newData = data;
-        return newData;
+        
+        return newMatrix;
     }
 
-    public static int[] getSelectedColumns(int selectedRow, int[][] data) {
-        int[] selectedColumns = new int[1];
-        System.out.println(Arrays.toString(data[selectedRow]));
-        for(int i = 0; i < data[selectedRow].length; i++) {
-            for(int k = 0; k < data.length; k++) {
-                    if(data[selectedRow][i] == 1) {
-                    System.out.println(data[k][i]);
-                } 
+    public static int[] getNewHeight() {
+        
+    }
+
+    public static int[] getNewWidth() {
+        
+    }
+
+    public static int[] addColumns(int[] columnsToDelete, int[][] Matrix) {
+        int newLength = columnsToDelete.length;
+        for(int i = 0; i < columnsToDelete.length; i++) {
+            if(columnsToDelete[i] == -1) {
+                newLength--;
             }
         }
-        return selectedColumns;
-    }
-
-    public static int sumColumns(int[][] data) {
-        int lowColumn = 0; // TODO look for least 1s
-        int[] sums = new int[data[0].length];
-        for(int i = 0; i < data[0].length; i++) {
-            for(int k = 0; k < data.length; k++) {
-                sums[i] = sums[i] + data[k][i];
+        int[] solution = new int[Matrix.length];
+        for(int i = 0; i < Matrix[0].length; i++) {
+            for(int k = 0; k < solution.length; k++) {
+                if(columnsToDelete[i] >= 0) {
+                    solution[k] = solution[k] + getSelectedColumn(i, Matrix)[k];
+                }
             }
         }
-        //System.out.println(Arrays.toString(sums));
-        return lowColumn;
+        //System.out.println(Arrays.toString(solution));
+        return solution;
     }
 
-    public static int sumRows(int selectedColumn, int[][] data) {
-        int lowRow = 0;
-        for(int i = 0; i < data.length; i++){  
-            if(data[i][selectedColumn] == 1) {
-                lowRow = i;
-                break;
-            } else { lowRow = -1; }
+    public static int[] getSColumns(int[] row, int[][] Matrix) {
+        int[] columns = new int[Matrix[0].length];
+        for(int i = 0; i < row.length; i++) { 
+            if(row[i] == 1) {
+                columns[i] = i;
+            } else {
+                columns[i] = -1;
+            }
         }
-        //System.out.println(lowRow);
-        return lowRow;
+        //System.out.println(Arrays.toString(columns));
+        return columns;
+    }
+
+    public static int[] getSelectedColumn(int columnN, int[][] Matrix) {
+        int column[] = new int[Matrix[0].length];
+        for(int i = 0; i < Matrix[columnN].length; i++) { 
+            column[i] = Matrix[i][columnN];
+        }
+        return column;
+    }
+
+    public static int[] getSelectedRow(int rowN, int[][] Matrix) {
+        int row[] = new int[Matrix[0].length];
+        for(int i = 0; i < Matrix.length; i++) { 
+            row[i] = Matrix[rowN][i];
+        }
+        return row;
+    }
+
+    public static int selectRow(int selectedColumn, int selectedRow, int[][] Matrix) {
+        int row = -1;
+        int counter = 0;
+        for(int i = 0; i < Matrix.length; i++) { 
+            if(Matrix[i][selectedColumn] == 1) {
+                row = counter;
+                counter++;
+                if(row == selectedRow) {
+                    row = i;
+                    break;
+                }
+            } else { row = -1; }
+        }
+        //System.out.println(row);
+        return row;
     }
 
     public static void cutBranch() {
         // TODO implement
     }
 
-    private static int[][] loadData(String fileName) {
+    private static int[][] loadMatrix(String fileName) {
         int[][] matrix = new int[getRows("matrix.csv")][getColumns("matrix.csv")];
 
         File file = new File(fileName);
@@ -82,7 +130,7 @@ public class SearchExactCover {
                 }
                 line++;
             }
-            System.out.println(Arrays.deepToString(matrix));
+            //System.out.println("Matrix: " + Arrays.deepToString(matrix));
         } catch(Exception e) {
             e.printStackTrace();
         }
