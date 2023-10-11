@@ -16,7 +16,7 @@ public class SearchExactCover {
     }
 
     public static int[][] exactCover(int[][] Matrix) {
-        int[][] newMatrix;
+        int[][] FinalMatrix = new int[1][1];
         int columnNum = currentColumn;
         int selectedRowNum = selectRow(columnNum, currentRow, Matrix);
         if(selectedRowNum == -1) {
@@ -26,32 +26,58 @@ public class SearchExactCover {
             int[] columnsToDelete = getSColumns(selectedRow, Matrix);
             int[] rowsToDelete = addColumns(columnsToDelete, Matrix);
 
-            newMatrix = new int[][];
-            System.out.println(Arrays.toString(columnsToDelete));
+            int[][] newMatrix = new int[getNewHeight(rowsToDelete, Matrix)][getNewWidth(columnsToDelete, Matrix)];
+            newMatrix = populateMatrix(rowsToDelete, columnsToDelete, Matrix, newMatrix);
+            System.out.println(Arrays.deepToString(newMatrix));
         }
         
         
         //int[] columnsToDelete = getcolumnsToDelete(selectedRow, Matrix);
 
         
+        return FinalMatrix;
+    }
+
+    public static int[][] populateMatrix(int[] rowsToDelete, int[] columnsToDelete, int[][] Matrix, int[][] newMatrix) {
+        int rowCount = 0;
+        int columnCount = 0;
+        for(int i = 0; i < Matrix.length; i++) {
+            if(rowsToDelete[i] == 0) {
+                for(int k = 0; k < Matrix[i].length; k++) {
+                    if(columnsToDelete[k] == -1) {
+                        newMatrix[rowCount][columnCount] = Matrix[i][k];
+                        columnCount++;
+                    }
+                }
+                rowCount++;
+            }
+        }
         return newMatrix;
     }
 
-    public static int[] getNewHeight() {
-        
+    public static int getNewHeight(int[] rowsToDelete, int[][] Matrix) {
+        int newHeight = Matrix.length;
+        for(int i = 0; i < rowsToDelete.length; i++) {
+            if(rowsToDelete[i] > 0) {
+                newHeight--;
+            }
+        }
+        //System.out.println(newHeight);
+        return newHeight;
     }
 
-    public static int[] getNewWidth() {
-        
+    public static int getNewWidth(int[] columnsToDelete, int[][] Matrix) {
+        int newWidth = Matrix[0].length;
+        for(int i = 0; i < columnsToDelete.length; i++) {
+            if(columnsToDelete[i] == -1) {
+                newWidth--;
+            }
+        }
+        //System.out.println(newWidth);
+        return newWidth;
     }
 
     public static int[] addColumns(int[] columnsToDelete, int[][] Matrix) {
-        int newLength = columnsToDelete.length;
-        for(int i = 0; i < columnsToDelete.length; i++) {
-            if(columnsToDelete[i] == -1) {
-                newLength--;
-            }
-        }
         int[] solution = new int[Matrix.length];
         for(int i = 0; i < Matrix[0].length; i++) {
             for(int k = 0; k < solution.length; k++) {
