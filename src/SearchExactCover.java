@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public class SearchExactCover {
 
+
     public static int currentColumn = 0;
     public static int currentRow = 0;
     public String solution = "";
@@ -24,9 +25,9 @@ public class SearchExactCover {
         } else {
             int[] selectedRow = getSelectedRow(selectedRowNum, Matrix);
             int[] columnsToDelete = getSColumns(selectedRow, Matrix);
-            int[] rowsToDelete = addColumns(columnsToDelete, Matrix);
+            int[] rowsToDelete = addColumns(columnsToDelete, Matrix); // selected wrong need fix 
 
-            int[][] newMatrix = new int[getNewHeight(rowsToDelete, Matrix)][getNewWidth(columnsToDelete, Matrix)];
+            int[][] newMatrix = new int[getNewHeight(rowsToDelete, Matrix)][getNewWidth(columnsToDelete, Matrix)]; // wrong size should be 2 4
             newMatrix = populateMatrix(rowsToDelete, columnsToDelete, Matrix, newMatrix);
             System.out.println(Arrays.deepToString(newMatrix));
         }
@@ -62,7 +63,7 @@ public class SearchExactCover {
                 newHeight--;
             }
         }
-        //System.out.println(newHeight);
+        System.out.println(newHeight);
         return newHeight;
     }
 
@@ -73,20 +74,23 @@ public class SearchExactCover {
                 newWidth--;
             }
         }
-        //System.out.println(newWidth);
+        System.out.println(newWidth);
         return newWidth;
     }
 
     public static int[] addColumns(int[] columnsToDelete, int[][] Matrix) {
         int[] solution = new int[Matrix.length];
-        for(int i = 0; i < Matrix[0].length; i++) {
-            for(int k = 0; k < solution.length; k++) {
-                if(columnsToDelete[i] >= 0) {
-                    solution[k] = solution[k] + getSelectedColumn(i, Matrix)[k];
+        for(int i = 0; i < columnsToDelete.length; i++) {
+            if(columnsToDelete[i] >= 0) {
+                for(int k = 0; k < solution.length; k++) {
+                    
+
+                    int[] tempColumn = getSelectedColumn(i, Matrix); //keep looking
+                    solution[k] = solution[k] + tempColumn[k];
                 }
             }
         }
-        //System.out.println(Arrays.toString(solution));
+        System.out.println(Arrays.toString(solution));
         return solution;
     }
 
@@ -104,8 +108,8 @@ public class SearchExactCover {
     }
 
     public static int[] getSelectedColumn(int columnN, int[][] Matrix) {
-        int column[] = new int[Matrix[0].length];
-        for(int i = 0; i < Matrix[columnN].length; i++) { 
+        int column[] = new int[Matrix.length];
+        for(int i = 0; i < Matrix[0].length; i++) {
             column[i] = Matrix[i][columnN];
         }
         return column;
@@ -113,7 +117,7 @@ public class SearchExactCover {
 
     public static int[] getSelectedRow(int rowN, int[][] Matrix) {
         int row[] = new int[Matrix[0].length];
-        for(int i = 0; i < Matrix.length; i++) { 
+        for(int i = 0; i < Matrix[0].length; i++) { 
             row[i] = Matrix[rowN][i];
         }
         return row;
