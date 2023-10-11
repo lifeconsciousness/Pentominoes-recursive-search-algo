@@ -14,8 +14,10 @@ public class Search {
 	public static final int horizontalGridSize = 5;
 	public static final int verticalGridSize = 6;
 	public static int calls = 0;
+	public static int depth = 0;
 
 	public static final char[] input = { 'W', 'Y', 'I', 'T', 'Z', 'L', 'P', 'N', 'F' };
+	public static final int[] inputIds = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 
 	// Static UI class to display the board
 	public static UI ui = new UI(horizontalGridSize, verticalGridSize, 50);
@@ -36,7 +38,101 @@ public class Search {
 		}
 		// Start the basic search
 		// basicSearch(field);
-		recursiveSearch(field, 0);
+		// recursiveSearch(field, 0);
+		recursiveSearch(field, inputIds, 0);
+	}
+
+	public static void recursiveSearch(int[][] field, int[] input, int depth) {
+		calls++;
+		// System.out.println(calls);
+
+		// go through all pentominoes
+		for (int i = 0; i < inputIds.length; i++) {
+			// go through all permutations of a pentomino
+			for (int j = 0; j < PentominoDatabase.data[i].length; j++) {
+
+				// iterate over all positions on the field
+				for (int boardX = 0; boardX < horizontalGridSize; boardX++) {
+					for (int boardY = 0; boardY < verticalGridSize; boardY++) {
+
+						// copy the field
+						int[][] copiedField = new int[horizontalGridSize][verticalGridSize];
+						for (int x = 0; x < horizontalGridSize; x++) {
+							for (int y = 0; y < verticalGridSize; y++) {
+								copiedField[x][y] = field[x][y];
+							}
+						}
+
+						// try to place pentomino
+						boolean placedPiece = placePiece(boardX, boardY, i, PentominoDatabase.data[i][j], copiedField);
+
+						if (placedPiece) {
+							System.out.println(placedPiece);
+							int[] newPieces = new int[inputIds.length - 1];
+							int indexCounter = 0;
+
+							// create a new int[] containing all pieces other than the one that was just
+							// placed
+							for (int k = 0; k < inputIds.length; k++) {
+								if (inputIds[k] != inputIds[i]) {
+									newPieces[indexCounter] = inputIds[k];
+									indexCounter++;
+								}
+							}
+
+							// System.out.println(newPieces.length);
+							// if newPieces is empty -- no pieces remain
+							if (newPieces.length == 0) {
+								ui.setState(copiedField);
+								System.out.println("Solution found");
+								break;
+							}
+							// recursion
+							else {
+								ui.setState(copiedField);
+								recursiveSearch(copiedField, newPieces, depth + 1);
+							}
+						}
+					}
+				}
+			}
+
+		}
+	}
+
+	public static boolean placePiece(int boardX, int boardY, int currentPiece,
+			int[][] currentPerm, int[][] currentBoard) {
+
+		// for each point in the piece
+		for (int pieceX = 0; pieceX < currentPerm[0].length - 1; pieceX++) {
+			for (int pieceY = 0; pieceY < currentPerm.length - 1; pieceY++) {
+
+				// if the piece has a filled square
+				if (currentPerm[pieceX][pieceY] != 0) {
+
+					int x = boardX + pieceX; // 2
+
+					// check x boundary
+					if (x >= currentPerm[0].length) {
+						return false;
+					}
+					int y = boardY + pieceY; // 1
+
+					// check y boundary
+					if (y >= currentPerm.length) {
+						return false;
+					}
+
+					// check if board has empty spot
+					if (currentBoard[x][y] != -1) {
+						return false;
+					}
+
+					currentBoard[x][y] = currentPiece;
+				}
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -185,86 +281,6 @@ public class Search {
 					// Add the ID of the pentomino to the board if the pentomino occupies this
 					// square
 					field[x + i][y + j] = pieceID;
-				}
-			}
-		}
-	}
-
-	private static void recursiveSearch(int[][] field, int pentominoIndex) {
-		boolean solutionFound = true;
-		System.out.println(pentominoIndex);
-		ui.setState(field);
-
-		int[][] pieceToPlace;
-		int pentID;
-		int x, y;
-
-		// Reset the field
-		for (int i = 0; i < field.length; i++) {
-			for (int j = 0; j < field[i].length; j++) {
-				if (field[i][j] == pentominoIndex) {
-					field[i][j] = -1;
-				}
-			}
-		}
-
-		for (int mutation = 0; mutation < PentominoDatabase.data[pentominoIndex].length; mutation++) {
-			pieceToPlace = PentominoDatabase.data[pentominoIndex][mutation];
-			pentID = pentominoIndex;
-
-			for (x = 0; x <= horizontalGridSize - pieceToPlace.length; x++) {
-				for (y = 0; y <= verticalGridSize - pieceToPlace[0].length; y++) {
-					if (canPlacePiece(field, pieceToPlace, x, y)) {
-						addPiece(field, pieceToPlace, pentID, x, y);
-						recursiveSearch(field, pentominoIndex + 1);
-						removePiece(field, pieceToPlace, x, y);
-					}
-				}
-			}
-		}
-
-		// check if there's any empty squares on the grid
-		for (int i = 0; i < field.length; i++) {
-			for (int j = 0; j < field[i].length; j++) {
-				if (field[i][j] == -1) {
-					solutionFound = false;
-				}
-			}
-		}
-
-		if (solutionFound) {
-			// All pentominoes have been placed, we have found a solution
-			ui.setState(field);
-			solutionFound = true;
-			System.out.println("Solution found");
-		} else {
-			System.out.println("Solution not found");
-			ui.setState(field);
-		}
-	}
-
-	private static boolean canPlacePiece(int[][] field, int[][] piece, int x, int y) {
-		for (int i = 0; i < piece.length; i++) {
-			for (int j = 0; j < piece[i].length; j++) {
-				if (piece[i][j] == 1) {
-					int newX = x + i;
-					int newY = y + j;
-
-					if (newX < 0 || newX >= horizontalGridSize || newY < 0 || newY >= verticalGridSize
-							|| field[newX][newY] != -1) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
-
-	private static void removePiece(int[][] field, int[][] piece, int x, int y) {
-		for (int i = 0; i < piece.length; i++) {
-			for (int j = 0; j < piece[i].length; j++) {
-				if (piece[i][j] == 1) {
-					field[x + i][y + j] = -1;
 				}
 			}
 		}
