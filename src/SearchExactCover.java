@@ -6,22 +6,62 @@ import java.util.Scanner;
 
 public class SearchExactCover {
 
+    public static int branchRowNum = 0; // implement in a recursive manner
+    public static int branchColumnNum = 0;
+    public String solution = ""; // TODO
 
-    public static int currentColumn = 0;
-    public static int currentRow = 0;
-    public String solution = "";
+    public static UI ui;
+    public static int[][] field;
+
     public static void main(String[] args) {
         int[][] Matrix = loadMatrix("matrix.csv");
-        exactCover(Matrix);
+        setup();
+        exactCover(Matrix, 0, 0);
         //System.out.println(Arrays.toString(Matrix));
     }
 
-    public static int[][] exactCover(int[][] Matrix) {
-        int[][] FinalMatrix = new int[1][1];
-        int columnNum = currentColumn;
-        int selectedRowNum = selectRow(columnNum, currentRow, Matrix);
+    public static void setup() {
+		Scanner scanner = new Scanner(System.in);
+		// Width
+		System.out.print("Width of the canvas (10): ");
+		int horizontalGridSize = scanner.nextInt();
+		// Height
+		System.out.print("Height of the canvas (6): ");
+		int verticalGridSize = scanner.nextInt();
+
+		// UI class to display the board
+    	ui = new UI(horizontalGridSize, verticalGridSize, 50);
+        field = new int[verticalGridSize][horizontalGridSize];
+	}
+
+    public static void exactCover(int[][] Matrix, int currentColumn, int currentRow) { // doesnt work for 3 deep problems because it is not fully recursive (mostlikely if(currentColumn < Matrix[0].length-1))
+        int selectedRowNum = selectRow(currentColumn, currentRow, Matrix);
         if(selectedRowNum == -1) {
-            System.out.println("WAAAAAAAAAAAAAAAA");
+            //System.out.println("No more rows valid in the column");
+            currentRow = 0;
+            if(currentColumn < Matrix[0].length-1) { // IDK if I have to make this recursive (works for any one that can be done in two steps)
+                currentColumn++;
+                exactCover(Matrix, currentColumn, currentRow);
+            } else {
+                System.out.println("[" + branchColumnNum + "/" + branchRowNum + "]------------------------------------------------------[" + branchColumnNum + "/" + branchRowNum + "]");
+                Matrix = loadMatrix("matrix.csv");
+                boolean finished = false;
+                branchRowNum++;
+                currentRow = branchRowNum;
+                currentColumn = branchColumnNum;
+                if(selectRow(currentColumn, currentRow, Matrix) == -1) {
+                    branchRowNum = 0;
+                    if(branchColumnNum < Matrix[0].length-1) {
+                        branchColumnNum++;
+                    } else {
+                        finished = true; // last row for last colum may not work FUCKKKKKKKKK
+                        System.out.println("Finished");
+                    }
+                }
+                if(!finished) {
+                    exactCover(Matrix, currentColumn, currentRow);
+                }
+            }
         } else {
             int[] selectedRow = getSelectedRow(selectedRowNum, Matrix);
             int[] columnsToDelete = getSColumns(selectedRow, Matrix);
@@ -29,27 +69,50 @@ public class SearchExactCover {
 
             int[][] newMatrix = new int[getNewHeight(rowsToDelete, Matrix)][getNewWidth(columnsToDelete, Matrix)];
             newMatrix = populateMatrix(rowsToDelete, columnsToDelete, Matrix, newMatrix);
-            System.out.println(Arrays.deepToString(newMatrix));
+            checkSolution(currentColumn, currentRow, Matrix, newMatrix);
         }
-        
-        
-        //int[] columnsToDelete = getcolumnsToDelete(selectedRow, Matrix);
+    }
 
-        
-        return FinalMatrix;
+    public static void checkSolution(int currentColumn, int currentRow, int[][] Matrix, int[][] newMatrix) {
+        if(newMatrix.length == 0) {
+            //System.out.println("Invalid solution - 0 rows left");
+            currentRow++;
+            exactCover(Matrix, currentColumn, currentRow);
+        } else if(newMatrix.length == 1) {
+            boolean solutionCheck = true;
+            for(int i= 0; i < newMatrix[0].length; i++) {
+                if(newMatrix[0][i] != 1) {
+                    solutionCheck = false;
+                } 
+            }
+            if(solutionCheck) {
+                System.out.print("Valid solution ");
+                System.out.println(Arrays.deepToString(newMatrix));     // remove if getting more than 1 solution
+            } else {
+                System.out.println("Invalid solution - not full board");
+                System.out.println(Arrays.deepToString(newMatrix));     // 
+                currentRow++;                                           // move outside else for more results
+                exactCover(Matrix, currentColumn, currentRow);          // 
+            }
+        } else { // Go to next level of depth
+            //System.out.println(Arrays.deepToString(newMatrix));
+            exactCover(newMatrix, 0, 0);
+        }
     }
 
     public static int[][] populateMatrix(int[] rowsToDelete, int[] columnsToDelete, int[][] Matrix, int[][] newMatrix) {
         int rowCount = 0;
         int columnCount = 0;
+
         for(int i = 0; i < Matrix.length; i++) {
             if(rowsToDelete[i] == 0) {
-                for(int k = 0; k < Matrix[i].length; k++) {
+                for(int k = 0; k < Matrix[0].length; k++) { // 0 change to i
                     if(columnsToDelete[k] == -1) {
-                        newMatrix[rowCount][columnCount] = Matrix[i][k]; //eAAAAA error
+                        newMatrix[rowCount][columnCount] = Matrix[i][k];
                         columnCount++;
                     }
                 }
+                columnCount = 0;
                 rowCount++;
             }
         }
@@ -63,7 +126,7 @@ public class SearchExactCover {
                 newHeight--;
             }
         }
-        System.out.println(newHeight);
+        //System.out.println(newHeight);
         return newHeight;
     }
 
@@ -74,7 +137,7 @@ public class SearchExactCover {
                 newWidth--;
             }
         }
-        System.out.println(newWidth);
+        //System.out.println(newWidth);
         return newWidth;
     }
 
@@ -88,7 +151,7 @@ public class SearchExactCover {
                 }
             }
         }
-        System.out.println(Arrays.toString(solution));
+        //System.out.println(Arrays.toString(solution));
         return solution;
     }
 
@@ -131,15 +194,17 @@ public class SearchExactCover {
                 if(row == selectedRow) {
                     row = i;
                     break;
-                }
+                } else { row = -1; }
             } else { row = -1; }
         }
         //System.out.println(row);
         return row;
     }
 
-    public static void cutBranch() {
-        // TODO implement
+    public static void resetField() {
+        for (int i = 0; i < field.length; i++)
+            for (int k = 0; k < field[i].length; k++)
+                field[i][k] = 0;
     }
 
     private static int[][] loadMatrix(String fileName) {
@@ -177,6 +242,7 @@ public class SearchExactCover {
         }
         return columns;
     }
+
     public static int getRows(String fileName) {
         int rows = 0;
         File file = new File(fileName);
