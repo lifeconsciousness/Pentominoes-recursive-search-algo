@@ -7,18 +7,30 @@
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
+import java.io.*;
+import java.lang.Thread;
 
 /**
  * This class includes the methods to support the search of a solution.
  */
 public class SearchNew {
     // Global variables
-    public static int horizontalGridSize = 5; // 10
-    public static int verticalGridSize = 5; // 6
+    public static int horizontalGridSize; // 10
+    public static int verticalGridSize; // 6
     public static char[] input; // XIZTUVWYLPN
     public static boolean stopAttempt; // false
     public static boolean solutionFound; // false
     public static UI ui;
+
+    public static void wait(int ms) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // System.out.println(e);
+            Thread.currentThread().interrupt();
+        }
+    }
 
     /**
      * Helper function which request the parameters to the user
@@ -36,8 +48,8 @@ public class SearchNew {
         // Pentominoes to use
         // System.out.print("Input array (XIZTUVWYLPNF): ");
         // input = scanner.next().toCharArray();
-        // input = new char[] { 'W', 'Y', 'I', 'T', 'Z', 'L', 'P', 'N', 'F' };
-        input = new char[] { 'I' };
+        input = new char[] { 'W', 'Y', 'I', 'T', 'Z', 'L', 'P', 'N', 'F' };
+        // input = new char[] { 'I' };
 
         // UI class to display the board
         ui = new UI(horizontalGridSize, verticalGridSize, 50);
@@ -45,17 +57,19 @@ public class SearchNew {
 
     /**
      * Helper function which starts a basic search algorithm
+     * 
+     * @throws InterruptedException
      */
-    public static void search() {
+    public static void search() throws InterruptedException {
         // Initialize an empty board
-        // int[][] field = new int[horizontalGridSize][verticalGridSize];
-        int[][] field = {
-                { 6, -1, -1, -1, -1 },
-                { 6, 6, -1, -1, -1 },
-                { -1, 6, 6, -1, -1 },
-                { -1, -1, -1, -1, -1 },
-                { -1, -1, -1, -1, -1 }
-        };
+        int[][] field = new int[horizontalGridSize][verticalGridSize];
+        // int[][] field = {
+        // { 6, -1, -1, -1, -1 },
+        // { 6, 6, -1, -1, -1 },
+        // { -1, 6, 6, -1, -1 },
+        // { -1, -1, -1, -1, -1 },
+        // { -1, -1, -1, -1, -1 }
+        // };
 
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {
@@ -128,9 +142,9 @@ public class SearchNew {
      * This algorithm can be very time-consuming
      * 
      * @param field a matrix representing the board to be fulfilled with pentominoes
+     * @throws InterruptedException
      */
-    private static void basicSearch(int[][] field) {
-        Random random = new Random();
+    private static void basicSearch(int[][] field) throws InterruptedException {
         solutionFound = false;
         long solutionCounter = 0;
 
@@ -151,13 +165,23 @@ public class SearchNew {
                 for (int x = 0; x < field.length; x++) { // loop over x position of pentomino
                     for (int y = 0; y < field[0].length; y++) { // loop over y position of pentomino
                         for (int mut = 0; mut < PentominoDatabase.data[pentID].length; mut++) {
+                            System.out.println(PentominoDatabase.data[pentID].length);
                             int[][] pieceToPlace = PentominoDatabase.data[pentID][mut];
 
                             if (canAdd(field, pieceToPlace, x, y)) {
-                                addPiece(field, pieceToPlace, mut, x, y);
+                                addPiece(field, pieceToPlace, pentID, x, y);
+                                ui.setState(field); // display the field
+
                                 solutionFound = true;
                             } else {
                                 solutionFound = false;
+                                // Empty board again to find a solution
+                                for (int i = 0; i < field.length; i++) {
+                                    for (int j = 0; j < field[i].length; j++) {
+                                        field[i][j] = -1;
+                                    }
+                                }
+                                Thread.sleep(100);
                             }
 
                         }
@@ -197,32 +221,29 @@ public class SearchNew {
      * @param y       y position of the pentomino
      */
     public static boolean canAdd(int[][] field, int[][] piece, int x, int y) {
-        boolean fits = true;
-
-        if (y + piece[0].length > horizontalGridSize || x + piece.length > verticalGridSize) {
-            fits = false;
+        if (y + piece[0].length > verticalGridSize || x + piece.length > horizontalGridSize) {
+            return false;
         }
-        if (fits) {
-            for (int k = 0; k < piece.length; k++) { // loop over x position of pentomino
-                for (int l = 0; l < piece[k].length; l++) { // loop over y position of pentomino
-                    if (piece[k][l] == 1) {
-
-                        if (field[x + k][y + l] != -1) {
-                            fits = false;
-                        }
-
+        for (int k = 0; k < piece.length; k++) { // loop over x position of pentomino
+            for (int l = 0; l < piece[k].length; l++) { // loop over y position of pentomino
+                if (piece[k][l] == 1) {
+                    if (field[x + k][y + l] != -1) {
+                        return false;
                     }
                 }
             }
         }
-        return fits;
+        return true;
     }
 
     public static void addPiece(int[][] field, int[][] piece, int pieceId, int x, int y) {
         for (int k = 0; k < piece.length; k++) { // loop over x position of pentomino
             for (int l = 0; l < piece[k].length; l++) { // loop over y position of pentomino
                 if (piece[k][l] == 1) {
+                    // if (x + k >= 0 && x + k < field.length && y + l >= 0 && y + l <
+                    // field[0].length) {
                     field[x + k][y + l] = pieceId;
+                    // }
                 }
             }
         }
@@ -230,30 +251,35 @@ public class SearchNew {
 
     /**
      * Main function. Needs to be executed to start the basic search algorithm
+     * 
+     * @throws InterruptedException
      */
-    public static void main(String[] args) {
-        int[][] field = {
-                { 6, -1, -1, -1, -1 },
-                { 6, 6, -1, -1, -1 },
-                { -1, 6, 6, -1, -1 },
-                { -1, -1, -1, -1, -1 },
-                { -1, -1, -1, -1, -1 }
-        };
+    public static void main(String[] args) throws InterruptedException {
+        // int[][] field = {
+        // { 6, -1, -1, -1, -1 },
+        // { 6, 6, -1, -1, -1 },
+        // { -1, 6, 6, -1, -1 },
+        // { -1, -1, -1, -1, -1 },
+        // { -1, -1, -1, -1, -1 }
+        // };
 
-        int[][] piece = {
-                { 0, 0, 1 },
-                { 0, 0, 1 },
-                { 1, 1, 1 },
-        };
+        // int[][] piece = {
+        // { 0, 0, 1 },
+        // { 0, 0, 1 },
+        // { 1, 1, 1 },
+        // };
 
-        System.out.println(canAdd(field, piece, 3, 3));
-        addPiece(field, piece, 3, 2, 2);
+        // System.out.println(canAdd(field, piece, 3, 3));
+        // addPiece(field, piece, 3, 2, 2);
 
-        for (int i = 0; i < field.length; i++) {
-            for (int j = 0; j < field[i].length; j++) {
-                System.out.print(field[i][j] + " ");
-            }
-            System.out.println();
-        }
+        // for (int i = 0; i < field.length; i++) {
+        // for (int j = 0; j < field[i].length; j++) {
+        // System.out.print(field[i][j] + " ");
+        // }
+        // System.out.println();
+        // }
+
+        setup();
+        search();
     }
 }
