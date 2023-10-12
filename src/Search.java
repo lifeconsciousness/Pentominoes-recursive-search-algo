@@ -4,7 +4,7 @@
  */
 
  import java.util.Random;
-
+import java.util.concurrent.TimeUnit;
 /**
  * This class includes the methods to support the search of a solution.
  */
@@ -150,6 +150,7 @@ public class Search
     		} else {
 				ui.setState(field,solutionCounter); 
 				solutionCounter++;
+				wait(1000);
 			}
     	}
     }
@@ -185,4 +186,15 @@ public class Search
     {
         search();
     }
+	public static void wait(int ms)
+{
+    try
+    {
+        Thread.sleep(ms);
+    }
+    catch(InterruptedException ex)
+    {
+        Thread.currentThread().interrupt();
+    }
+}
 }
