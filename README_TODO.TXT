@@ -5,8 +5,27 @@ all he/she needs to know. The comments should usually include at least:
 ------------------------------------------------------------------------
 
 PROJECT TITLE: PENTOMINOES
-PURPOSE OF PROJECT: The goal of this project is to implement a more efficient algorithm for placing all pentominoes on a board to maximise space utilisation. This is useful to know in real-life situations for example, making use of as much free space as possible in shipping container loading to be cost-effective.
-VERSION or DATE: October 9 2023
-HOW TO START THIS PROJECT: Begin by looking at the given code template and understanding parts of the code. Next fill in the code that shows the missing pentominoes in PentominoBuilder.java. Then check if a rectangle fill is a possible solution in Search.java. Check if there are any duplicate rotations of each of the pentominoes. Since the goal is to fit all the pentominoes on one rectangular board, we have to find an efficient algorithm to solve this by itself. Therefore, we should implement different algorithms and test each algorithm with different inputs and then use the most efficient algorithm. In summary, at the end of phase 1 we should have one working basic search algorithm and one working branching algorithm.  
-AUTHORS: 
-USER INSTRUCTIONS:
+PURPOSE OF PROJECT: The goal of this project is to implement a more efficient algorithm for placing all pentominoes on a board to maximise space 
+utilisation. This is useful to know in real-life situations for example, making use of as much free space as possible in shipping container loading 
+to be cost-effective.
+
+VERSION or DATE: October 12 2023
+
+HOW TO START THIS PROJECT: Begin by looking at the given code template and understanding parts of the code. Next fill in the code that shows the 
+missing pentominoes in PentominoBuilder.java. Then check if a rectangle fill is a possible solution in Search.java. Check if there are any 
+duplicate rotations of each of the pentominoes. Since the goal is to fit all the pentominoes on one rectangular board, we have to find an efficient 
+algorithm to solve this by itself. Therefore, we should implement different algorithms and test each algorithm with different inputs and then use 
+the most efficient algorithm. In summary, at the end of phase 1 we should have one working basic search algorithm and one working branching 
+algorithm.  
+
+AUTHORS: Faisal, Anton, Hugo, Vasileios, Petros, Maksym, Raman
+
+USER INSTRUCTIONS: There are 3 different algorithms.
+First run pentominoBuilder.class
+- Search.java
+    random brute force algorithm. To run it run the Search.class file and input the desired values according to the input.
+- SearchNew.java
+    Brute force algorithm. To run it run the SearchNew.class file.
+- Search.java
+    Branching algorithm. To run it run the SearchExactCover.class, The input can be changed by changing the variables inside MatrixBuilder.java and
+    running it.
