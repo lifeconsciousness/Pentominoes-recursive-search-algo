@@ -6,8 +6,6 @@ import java.util.Scanner;
 
 public class SearchExactCover {
 
-    public static int branchRowNum = 0; // implement in a recursive manner
-    public static int branchColumnNum = 0;
     public String solution = ""; // TODO
 
     public static UI ui;
@@ -36,47 +34,30 @@ public class SearchExactCover {
 
     public static void exactCover(int[][] Matrix, int currentColumn, int currentRow) { // doesnt work for 3 deep problems because it is not fully recursive (mostlikely if(currentColumn < Matrix[0].length-1))
         int selectedRowNum = selectRow(currentColumn, currentRow, Matrix);
-        if(selectedRowNum == -1) {
-            //System.out.println("No more rows valid in the column");
-            currentRow = 0;
-            if(currentColumn < Matrix[0].length-1) { // IDK if I have to make this recursive (works for any one that can be done in two steps)
-                currentColumn++;
-                exactCover(Matrix, currentColumn, currentRow);
-            } else {
-                System.out.println("[" + branchColumnNum + "/" + branchRowNum + "]------------------------------------------------------[" + branchColumnNum + "/" + branchRowNum + "]");
-                Matrix = loadMatrix("matrix.csv");
-                boolean finished = false;
-                branchRowNum++;
-                currentRow = branchRowNum;
-                currentColumn = branchColumnNum;
-                if(selectRow(currentColumn, currentRow, Matrix) == -1) {
-                    branchRowNum = 0;
-                    if(branchColumnNum < Matrix[0].length-1) {
-                        branchColumnNum++;
-                    } else {
-                        finished = true; // last row for last colum may not work FUCKKKKKKKKK
-                        System.out.println("Finished");
-                    }
-                }
-                if(!finished) {
-                    exactCover(Matrix, currentColumn, currentRow);
-                }
-            }
-        } else {
-            int[] selectedRow = getSelectedRow(selectedRowNum, Matrix);
-            int[] columnsToDelete = getSColumns(selectedRow, Matrix);
-            int[] rowsToDelete = addColumns(columnsToDelete, Matrix); 
+        int[] selectedRow = getSelectedRow(selectedRowNum, Matrix);
+        int[] columnsToDelete = getSColumns(selectedRow, Matrix);
+        int[] rowsToDelete = addColumns(columnsToDelete, Matrix); 
 
-            int[][] newMatrix = new int[getNewHeight(rowsToDelete, Matrix)][getNewWidth(columnsToDelete, Matrix)];
-            newMatrix = populateMatrix(rowsToDelete, columnsToDelete, Matrix, newMatrix);
-            checkSolution(currentColumn, currentRow, Matrix, newMatrix);
-        }
+        int[][] newMatrix = new int[getNewHeight(rowsToDelete, Matrix)][getNewWidth(columnsToDelete, Matrix)];
+        newMatrix = populateMatrix(rowsToDelete, columnsToDelete, Matrix, newMatrix);
+        checkSolution(currentColumn, currentRow, Matrix, newMatrix);
     }
 
     public static void checkSolution(int currentColumn, int currentRow, int[][] Matrix, int[][] newMatrix) {
         if(newMatrix.length == 0) {
             //System.out.println("Invalid solution - 0 rows left");
-            currentRow++;
+            int nextSelectedRowNum = selectRow(currentColumn, (currentRow+1), Matrix);
+            if(nextSelectedRowNum == -1) {
+                currentColumn++;
+                currentRow = 0;
+            } else {
+                if(currentColumn < Matrix[0].length-1) {
+                    //currentColumn = 0;
+                    currentRow++;
+                } else {
+                    System.out.println("Dead branch"); //TODO
+                }
+            }
             exactCover(Matrix, currentColumn, currentRow);
         } else if(newMatrix.length == 1) {
             boolean solutionCheck = true;
