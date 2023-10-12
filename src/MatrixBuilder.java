@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class MatrixBuilder {
-    public static int horizontalGridSize = 3; // 10
-    public static int verticalGridSize = 2; // 6
-    public static char[] input = { 'R', 'U' }; //{'X', 'I', 'Z', 'T', 'U', 'V', 'W', 'Y', 'L', 'P', 'N', 'F'}; // XIZ TUV WYL PNF
+    public static int horizontalGridSize = 2; // 10
+    public static int verticalGridSize = 5; // 6
+    public static char[] input = { 'P', 'P' }; //{'X', 'I', 'Z', 'T', 'U', 'V', 'W', 'Y', 'L', 'P', 'N', 'F'}; // XIZ TUV WYL PNF
     public static int totalPossibilities = 0;
     public static int cRow = 0;
     public static int listPos = 0;

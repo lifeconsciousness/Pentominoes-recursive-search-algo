@@ -33,16 +33,9 @@ public class Search {
 		// Pentominoes to use
 		System.out.print("Input array (XIZTUVWYLPNF): ");
 		input = scanner.next().toCharArray();
-		try {
-			search();
-			// UI class to display the board
-    		ui = new UI(horizontalGridSize, verticalGridSize, 50);
-		} catch(Exception e) {
-			System.out.println("---Invalid input---");
-			setup();
-		}
-
-		
+		search();
+		// UI class to display the board
+		ui = new UI(horizontalGridSize, verticalGridSize, 50);		
 	}
 
 	/**

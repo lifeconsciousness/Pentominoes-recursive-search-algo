@@ -7,7 +7,6 @@ import java.util.Scanner;
 public class SearchExactCover {
 
     public static boolean flag = true;
-    public String solution = ""; // TODO
 
     public static UI ui;
     public static int[][] field;
