@@ -14,7 +14,7 @@ public class Search {
 	// Global variables
     public static int horizontalGridSize; // 10
     public static int verticalGridSize; // 6
-    public static char[] input; // XIZTUVWYLPN
+    public static char[] input; // XIZTUVWYLPNF
 	public static boolean stopAttempt; // false
 	public static boolean solutionFound; // false
 	public static UI ui;
@@ -33,9 +33,16 @@ public class Search {
 		// Pentominoes to use
 		System.out.print("Input array (XIZTUVWYLPNF): ");
 		input = scanner.next().toCharArray();
+		try {
+			search();
+			// UI class to display the board
+    		ui = new UI(horizontalGridSize, verticalGridSize, 50);
+		} catch(Exception e) {
+			System.out.println("---Invalid input---");
+			setup();
+		}
 
-		// UI class to display the board
-    	ui = new UI(horizontalGridSize, verticalGridSize, 50);
+		
 	}
 
 	/**
