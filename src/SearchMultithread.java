@@ -8,20 +8,25 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 import java.lang.Thread;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class includes the methods to support the search of a solution.
  */
-public class SearchNew {
+public class SearchMultithread {
     // Global variables
     public static int horizontalGridSize; // 10
     public static int verticalGridSize; // 6
     public static char[] inputMain; // XIZTUVWYLPN
     public static boolean stopAttempt; // false
-    public static boolean solutionFound; // false
     public static UI ui;
     public static long calls;
     public static long solutionCounter = 0;
+    public static boolean stop = false;
+
+    private static final int NUM_THREADS = Runtime.getRuntime().availableProcessors(); // Number of threads to use
 
     /**
      * Helper function which request the parameters to the user
@@ -126,6 +131,9 @@ public class SearchNew {
     private static void recursiveSearch(int[][] field, char[] input) throws InterruptedException {
         calls++;
 
+        // Create a thread pool with the desired number of threads
+        ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
+
         // loop through all pentominoes
         for (int currentPent = 0; currentPent < input.length; currentPent++) {
             // Choose a pentomino id depending on currentPent
@@ -140,49 +148,68 @@ public class SearchNew {
 
                         // check if solution was found
                         if (checkField(field)) {
-                            System.out.println("Solution found");
-                            System.out.println("Function was called " + calls + " times");
+                            System.out.println("");
+                            System.out.println("\u001B[32mSolution number " + solutionCounter + " found");
+                            System.out.println("\u001B[37mFunction was called " + calls + " times");
                             solutionCounter++;
-                            ui.setState(field);
-                            Thread.sleep(20000);
 
-                            break;
+                            stop = true;
+                            int[][] displayField = copyField(field);
+                            ui.setState(displayField);
+
+                            executor.shutdownNow();
+                            Thread.sleep(2500);
+                            stop = false;
+
+                            return;
                         }
 
-                        // choose mutation of the current pentomino
-                        int[][] pentToPlace = PentominoDatabase.data[pentID][mut];
+                        final int finalMut = mut;
+                        final int finalX = x;
+                        final int finalY = y;
+                        final int finalPent = currentPent;
 
-                        // copy field in order to use it for branching
-                        int[][] copiedField = copyField(field);
+                        // Submit a task to the thread pool
+                        executor.submit(() -> {
+                            int[][] copiedField = copyField(field);
 
-                        // check if current permutation of pentomino can be added on the y,x
-                        // coordinates of the field
-                        if (canAdd(copiedField, pentToPlace, x, y)) {
-                            // add pentomino to the copied field
-                            addpent(copiedField, pentToPlace, pentID, x, y);
-                            ui.setState(copiedField); // display the field
+                            int[][] pentToPlace = PentominoDatabase.data[pentID][finalMut];
 
-                            // includes all pents except for the current one
-                            char[] filteredPents = new char[input.length - 1];
-                            int newArrCounter = 0;
-
-                            for (int i = 0; i < input.length; i++) {
-                                if (input[i] != input[currentPent]) {
-                                    filteredPents[newArrCounter] = input[i];
-                                    newArrCounter++;
+                            if (canAdd(copiedField, pentToPlace, finalX, finalY)) {
+                                addpent(copiedField, pentToPlace, pentID, finalX, finalY);
+                                if (!stop) {
+                                    ui.setState(copiedField);
                                 }
-                            }
 
-                            // if array of available pentominoes is not exhausted, recursively call the
-                            // function again
-                            if (filteredPents.length != 0) {
-                                recursiveSearch(copiedField, filteredPents);
+                                char[] filteredPents = new char[input.length - 1];
+                                int newArrCounter = 0;
+
+                                for (int i = 0; i < input.length; i++) {
+                                    if (input[i] != input[finalPent]) {
+                                        filteredPents[newArrCounter] = input[i];
+                                        newArrCounter++;
+                                    }
+                                }
+
+                                if (filteredPents.length != 0) {
+                                    try {
+                                        recursiveSearch(copiedField, filteredPents);
+                                    } catch (InterruptedException e) {
+                                        // Handle or log the exception as needed
+                                        e.printStackTrace();
+                                    }
+                                }
+
                             }
-                        }
+                        });
                     }
                 }
             }
         }
+
+        // Shutdown the executor and wait for all threads to finish
+        executor.shutdown();
+        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
     }
 
     // check if field contains empty spots, if so return false
